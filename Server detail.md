@@ -37,6 +37,35 @@ Database = "postgres"
 User     = "postgres"
 Password = "IBMAPP@2026"
 ```
+---
+
+## 4. Session pooler
+
+Only recommended as an alternative to Direct Connection, when connecting via an IPv4 network.
+```text
+Connection String = "postgresql://postgres.tfsdrsthgcnjajwnqixp:IBMAPP@2026@aws-1-ap-southeast-1.pooler.supabase.com:5432/postgres"
+
+host="aws-1-ap-southeast-1.pooler.supabase.com"
+port="5432"
+database="postgres"
+user="postgres.tfsdrsthgcnjajwnqixp"
+```
+
+---
+
+---
+
+## 5. Transaction pooler
+
+Ideal for stateless applications like serverless functions where each interaction with Postgres is brief and isolated.
+```text
+Connection String = "postgresql://postgres.tfsdrsthgcnjajwnqixp:IBMAPP@2026@aws-1-ap-southeast-1.pooler.supabase.com:6543/postgres"
+
+host="aws-1-ap-southeast-1.pooler.supabase.com"
+port="5432"
+database="postgres"
+user="postgres.tfsdrsthgcnjajwnqixp"
+```
 
 ---
 
@@ -52,6 +81,12 @@ DATABASE_URL="postgresql://postgres.tfsdrsthgcnjajwnqixp:IBMAPP@2026@aws-1-ap-so
 ```
 
 ---
+
+### Drizzle Connection  
+```
+# Connect to Postgres via the shared transaction-mode pooler (IPv4-only)
+DATABASE_URL="postgresql://postgres.tfsdrsthgcnjajwnqixp:IBMAPP@2026@aws-1-ap-southeast-1.pooler.supabase.com:6543/postgres"
+```
 
 ### Session Pooler (Recommended for Migrations)
 
