@@ -36,7 +36,114 @@ The team creates a new database name (access). In the IBM app, access control is
 The team plans to use Python to convert all Excel table data into PostgreSQL tables on the online server:
 
 ```
+Excel File
+      │
+      ▼
+Read Excel
+(pandas)
 
+      │
+      ▼
+Validate Columns
+
+      │
+      ▼
+Remove Duplicates
+
+      │
+      ▼
+Handle Missing Values
+
+      │
+      ▼
+Standardize Values
+(Male/Female
+Yes/No)
+
+      │
+      ▼
+Generate Department IDs
+
+      │
+      ▼
+Generate Job Role IDs
+
+      │
+      ▼
+Split Data into
+Multiple DataFrames
+
+employees
+
+salary
+
+performance
+
+training
+
+experience
+
+satisfaction
+
+      │
+      ▼
+Bulk Insert
+(psycopg2)
+
+      │
+      ▼
+Commit
+
+      │
+      ▼
+Write Import Log
+
+      │
+      ▼
+Refresh Dashboard Summary Tables
+Recommended Project Structure
+etl/
+
+│
+├── config.py
+
+├── db.py
+
+├── validator.py
+
+├── cleaner.py
+
+├── transformer.py
+
+├── mapper.py
+
+├── loader.py
+
+├── logger.py
+
+├── main.py
+
+│
+├── excel/
+│      employees.xlsx
+│
+├── logs/
+│
+└── archive/
+Each module has a single responsibility:
+validator.py checks required columns and data types.
+cleaner.py removes duplicates and fixes missing values.
+transformer.py derives new fields (e.g., Experience Level, Promotion Status).
+mapper.py converts names to foreign keys (department, role, education field).
+loader.py performs transactional inserts into PostgreSQL.
+logger.py records every import into import_logs.
+Recommendation
+Your document currently assumes copying Power BI output back into Excel and then uploading it to PostgreSQL. From a database engineering perspective, I recommend making PostgreSQL the single source of truth:
+Import and clean raw Excel data with Python.
+Store normalized data in PostgreSQL.
+Let Power BI connect directly to PostgreSQL for dashboards.
+Let the Next.js application also read from PostgreSQL.
+This removes duplicate data movement, reduces errors, and ensures both the dashboards and the web app always use the same, up-to-date data.
 ```
 
 Now the analysis team provides the online server and the three dashboards to the developer to make the IBM app.
@@ -46,7 +153,764 @@ Your job, like a senior developer (not AI), is to make a web IBM app using this 
 The term of IBM app prompt:
 
 ```
-# IBM app design or theme as a prompt
+Below is a **professional AI prompt** you can give to Claude, GPT, Gemini, Lovable, v0, Bolt, Replit AI, or any UI generation model to recreate the **design philosophy** of IBM's website—not to copy it exactly, but to capture its visual language, UX principles, typography, spacing, color system, and component behavior.
+
+---
+
+# IBM Website UI/UX Design Analysis Prompt
+
+## Role
+
+Act as a **Senior UI/UX Designer**, **Creative Director**, and **Frontend Design System Architect** with over 20 years of experience designing enterprise websites for Fortune 500 companies.
+
+Analyze the IBM homepage and recreate its **design language**, **visual hierarchy**, and **professional enterprise aesthetic**, without copying the original website.
+
+Design a modern enterprise website inspired by IBM's design principles.
+
+---
+
+# Overall Design Philosophy
+
+The design should feel:
+
+* Enterprise-grade
+* Professional
+* Premium
+* Clean
+* Minimal
+* Highly structured
+* Technology-focused
+* Future-ready
+* Corporate but approachable
+* Elegant rather than flashy
+* Large-scale global company
+
+The interface should communicate trust, intelligence, innovation, and stability.
+
+Avoid startup-style colorful gradients or excessive animations.
+
+---
+
+# Layout Structure
+
+Use a strict grid layout.
+
+Characteristics:
+
+* Large white spaces
+* Plenty of breathing room
+* Modular card-based sections
+* Horizontal alignment
+* Consistent spacing system
+* Clear visual hierarchy
+* Symmetrical content blocks
+
+Page Width
+
+* Max Width:
+  1440–1600px
+
+Content Width
+
+* 1200–1320px
+
+Padding
+
+Desktop:
+
+80px–120px
+
+Tablet:
+
+48px
+
+Mobile:
+
+20px
+
+Spacing System
+
+8px scale
+
+Example:
+
+8px
+
+16px
+
+24px
+
+32px
+
+48px
+
+64px
+
+96px
+
+128px
+
+Every section should have generous vertical spacing.
+
+---
+
+# Color Palette
+
+Primary Colors
+
+IBM Blue
+
+```
+#0F62FE
+```
+
+Dark Text
+
+```
+#161616
+```
+
+Secondary Text
+
+```
+#525252
+```
+
+Light Gray Background
+
+```
+#F4F4F4
+```
+
+Border Gray
+
+```
+#E0E0E0
+```
+
+Card Background
+
+```
+#FFFFFF
+```
+
+Footer Background
+
+```
+#161616
+```
+
+Footer Text
+
+```
+#FFFFFF
+```
+
+Accent Colors
+
+Very limited.
+
+Only use:
+
+Blue
+
+Black
+
+White
+
+Light Gray
+
+Never use rainbow gradients.
+
+---
+
+# Typography
+
+Use IBM Plex Sans.
+
+Fallback:
+
+Inter
+
+Helvetica
+
+Arial
+
+Hierarchy
+
+Hero Title
+
+48–64px
+
+Bold
+
+Section Title
+
+36px
+
+Medium
+
+Card Title
+
+20px
+
+Medium
+
+Paragraph
+
+16px
+
+Regular
+
+Small Text
+
+14px
+
+Navigation
+
+15px
+
+Weight
+
+Regular
+
+Medium
+
+SemiBold
+
+Bold
+
+Avoid extra-bold fonts.
+
+Letter spacing should be slightly open.
+
+Line height around 150%.
+
+---
+
+# Navigation Bar
+
+Sticky navigation.
+
+Height:
+
+72px
+
+Background:
+
+White
+
+Minimal shadow on scroll.
+
+Left
+
+Logo
+
+Center
+
+Dropdown menus
+
+Products
+
+Solutions
+
+Industries
+
+Resources
+
+Support
+
+Company
+
+Right
+
+Search
+
+Language
+
+Account
+
+CTA button
+
+Hover Effects
+
+Simple underline
+
+Text color transition
+
+No dramatic animation.
+
+---
+
+# Hero Section
+
+Large whitespace.
+
+Left Side
+
+Large headline
+
+Supporting description
+
+Primary CTA
+
+Secondary CTA
+
+Right Side
+
+Large clean illustration
+
+Technology visual
+
+AI graphic
+
+Enterprise dashboard
+
+Abstract 3D shapes
+
+Avoid clutter.
+
+Buttons
+
+Primary
+
+Solid blue
+
+White text
+
+Secondary
+
+White
+
+Blue border
+
+Blue text
+
+Radius
+
+4px
+
+---
+
+# Cards
+
+Cards should be minimal.
+
+Structure
+
+Image
+
+Category
+
+Title
+
+Description
+
+CTA
+
+Border
+
+1px solid light gray
+
+Radius
+
+4px
+
+Hover
+
+Small elevation
+
+Border turns blue
+
+Arrow icon animates slightly
+
+Shadow should remain subtle.
+
+---
+
+# Buttons
+
+Primary
+
+Blue background
+
+White text
+
+Small radius
+
+Secondary
+
+Outlined
+
+Blue border
+
+Blue text
+
+Text Button
+
+Only arrow icon
+
+Simple hover
+
+---
+
+# Icons
+
+Thin line icons
+
+Simple
+
+Monochrome
+
+IBM Carbon style
+
+Avoid colorful icons.
+
+---
+
+# Images
+
+Use
+
+Technology
+
+Cloud
+
+AI
+
+Business
+
+Enterprise teams
+
+Data visualization
+
+Servers
+
+Cybersecurity
+
+Digital transformation
+
+Photography style
+
+Professional
+
+Minimal
+
+Soft lighting
+
+Corporate
+
+High resolution
+
+Never use stock images that feel generic.
+
+---
+
+# Sections
+
+Hero
+
+Featured News
+
+Recommended Solutions
+
+Technology Products
+
+Case Studies
+
+Training
+
+Innovation
+
+Newsletter
+
+Footer
+
+Every section should have different layout rhythm while maintaining consistency.
+
+---
+
+# White Space
+
+Very important.
+
+Leave generous spacing between:
+
+Sections
+
+Cards
+
+Headings
+
+Paragraphs
+
+Buttons
+
+Whitespace should be a design element.
+
+---
+
+# Grid System
+
+Desktop
+
+12-column grid
+
+Tablet
+
+8-column
+
+Mobile
+
+4-column
+
+Card spacing
+
+24px
+
+Section spacing
+
+96px
+
+---
+
+# Footer
+
+Dark background
+
+Simple multi-column layout
+
+Company
+
+Products
+
+Resources
+
+Support
+
+Legal
+
+Social
+
+Minimal typography
+
+No excessive decoration.
+
+---
+
+# Interaction Design
+
+Hover
+
+Border color change
+
+Text color transition
+
+Arrow movement
+
+Card elevation
+
+Buttons
+
+Small scale
+
+Smooth transition
+
+Duration
+
+200ms
+
+Ease-in-out
+
+Avoid flashy animations.
+
+---
+
+# Responsive Design
+
+Desktop First
+
+Then tablet
+
+Then mobile
+
+Navigation becomes hamburger.
+
+Cards become stacked.
+
+Images resize proportionally.
+
+Maintain generous spacing.
+
+---
+
+# Accessibility
+
+WCAG AA
+
+High contrast
+
+Keyboard navigation
+
+Focus indicators
+
+Readable typography
+
+Accessible buttons
+
+Proper heading hierarchy
+
+ARIA labels
+
+---
+
+# Visual Hierarchy
+
+Priority
+
+1 Hero
+
+2 Featured Technology
+
+3 Solutions
+
+4 Products
+
+5 Case Studies
+
+6 Learning
+
+7 Newsletter
+
+8 Footer
+
+Users should understand the page in less than 5 seconds.
+
+---
+
+# Design Language
+
+Keywords
+
+Enterprise
+
+Minimal
+
+Professional
+
+Elegant
+
+Trustworthy
+
+Intelligent
+
+Modern
+
+Technical
+
+Corporate
+
+Scalable
+
+Clean
+
+Sophisticated
+
+Future-focused
+
+High-end
+
+Premium
+
+---
+
+# Component Design Rules
+
+Buttons
+
+Minimal
+
+Cards
+
+Bordered
+
+Navigation
+
+Simple
+
+Dropdown
+
+Clean
+
+Forms
+
+Large inputs
+
+Simple validation
+
+Tables
+
+Minimal borders
+
+Charts
+
+Blue palette
+
+Icons
+
+Line style
+
+Images
+
+Professional
+
+Spacing
+
+Generous
+
+Typography
+
+Readable
+
+Animations
+
+Subtle
+
+---
+
+# Positive Aspects of IBM's Design
+
+* Excellent use of whitespace that makes complex content easy to scan.
+* Strong visual hierarchy with clear section separation.
+* Consistent design system across cards, buttons, typography, and icons.
+* Restrained color palette that reinforces trust and professionalism.
+* Enterprise-focused aesthetic suitable for B2B audiences.
+* Modular card layouts that are reusable and scalable.
+* High accessibility through strong contrast and readable typography.
+* Clear calls-to-action without overwhelming the user.
+* Structured navigation that supports large information architectures.
+* Balanced mix of imagery, illustrations, and text.
+
+---
+
+# Design Improvements (Optional Enhancements)
+
+If modernizing this style while preserving its enterprise feel, consider:
+
+* Adding subtle glassmorphism only where appropriate (avoid overuse).
+* Introducing soft micro-interactions (fade, slide, scale) for cards and buttons.
+* Using slight background color variations to improve section separation.
+* Enhancing CTA buttons with gentle hover states.
+* Incorporating tasteful gradients only as small accent elements, not full-page backgrounds.
+* Supporting dark mode with a complete design token system.
+* Adding tasteful scroll-triggered reveal animations while maintaining performance.
+* Including a more prominent search experience for content-heavy sites.
+
+---
+
+## Final Design Objective
+
+> Create a premium enterprise website inspired by IBM's visual language. The interface should feel trustworthy, clean, intelligent, and scalable. Use a restrained blue, white, gray, and black palette, generous whitespace, IBM Plex Sans-style typography, modular card layouts, subtle interactions, and a robust design system suitable for AI, cloud, analytics, cybersecurity, consulting, and other enterprise technology products. The result should look like a modern Fortune 500 technology company website rather than a startup landing page.
 ```
 
 The IBM app should open the first login or sign-up page. When the user enters user ID, email, password, and clicks the submit button, the IBM app checks in the database whether the user ID, email, and password are present in the access database.
